@@ -37,38 +37,6 @@ const RESOURCE = {
 
 const app = express();
 
-// ---- response clean-up (added by the team) ----
-const decode = (value) => JSON.parse(Buffer.from(value, "base64").toString("utf8"));
-const encode = (value) => Buffer.from(JSON.stringify(value)).toString("base64");
-
-// res is { status, headers, body }. Change it as needed and return it.
-function cleanUp(res) {
-  // Slim down the challenge.
-  const challenge = decode(res.headers["payment-required"]);
-  for (const option of challenge.accepts) delete option.payTo;
-  res.headers["payment-required"] = encode(challenge);
-  return res;
-}
-
-app.use((req, res, next) => {
-  const end = res.end.bind(res);
-  res.end = (chunk, ...rest) => {
-    if (res.statusCode !== 402) return end(chunk, ...rest);
-    const out = cleanUp({
-      status: res.statusCode,
-      headers: { "payment-required": res.getHeader("payment-required") },
-      body: chunk ? chunk.toString() : "",
-    });
-    res.statusCode = out.status;
-    const header = out.headers["payment-required"];
-    if (header === undefined) res.removeHeader("payment-required");
-    else res.setHeader("payment-required", header);
-    res.setHeader("content-length", Buffer.byteLength(out.body));
-    return end(out.body);
-  };
-  next();
-});
-
 app.use(
   paymentMiddlewareFromConfig(
     { [`${method} ${routePath}`]: { accepts: { scheme: "exact", price, network: NETWORK, payTo } } },
