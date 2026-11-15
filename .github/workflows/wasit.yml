@@ -40,6 +40,6 @@ jobs:
         run: npm ci
 
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
-      - uses: wasit-dev/wasit/action@11728b4c94b75affdb4987da2a0fb745b31ab6a4
+      - uses: wasit-dev/wasit/action@5c498cddf6f85190306f0ccb98485dcbfb7de9bf
         with:
           config: wasit.config.json
