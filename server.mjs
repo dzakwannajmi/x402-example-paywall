@@ -16,7 +16,9 @@ if (!["GET", "POST"].includes(method) || !/^\/[a-z0-9/_-]+$/.test(routePath)) {
 
 const PORT = Number(process.env.PORT || 4402);
 const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://www.x402.org/facilitator";
-const NETWORK = "stellar:testnet";
+// This branch names the Stellar main network in the payment request. The seller still listens on 127.0.0.1 only and
+// its facilitator is a local stand-in that cannot verify or settle a payment, so no payment can be made.
+const NETWORK = "stellar:pubnet";
 
 // The payee is a public address only. It is created once and the secret key is discarded on purpose:
 // nothing in this project can spend from it.

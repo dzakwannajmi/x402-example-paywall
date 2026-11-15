@@ -8,7 +8,7 @@
   "environments": {
     "local": {
       "baseUrl": "http://127.0.0.1:4402",
-      "network": "stellar:testnet",
+      "network": "stellar:pubnet",
       "operatedByMe": true
     }
   },
