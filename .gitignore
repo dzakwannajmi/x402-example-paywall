@@ -1,0 +1,7 @@
+node_modules/
+.env
+.env.*
+report.md
+report.json
+report-full.md
+report-full.json

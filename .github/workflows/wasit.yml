@@ -1,0 +1,45 @@
+# Wasit on every pull request and every push to main.
+#
+# What this does: installs the service, starts it inside the job (service.start in
+# wasit.config.json), runs Wasit's read-only challenge checks against it, comments the
+# result on the pull request, and compares it with the last run on main. The job named
+# Wasit is the check on the pull request.
+#
+# The service starts with a small local stand-in for the facilitator (scripts/serve.mjs),
+# so the job needs no internet access for the service and sends no payment.
+#
+# Do not use pull_request_target. It would give the code of a pull request the token and
+# the secrets of your repository.
+
+name: Wasit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  wasit:
+    name: Wasit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install the service
+        run: npm ci
+
+      # Pin Wasit to a full commit SHA of its repository, never a branch name.
+      - uses: wasit-dev/wasit/action@11728b4c94b75affdb4987da2a0fb745b31ab6a4
+        with:
+          config: wasit.config.json

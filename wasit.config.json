@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "service": {
+    "start": "node scripts/serve.mjs",
+    "ready": { "url": "http://127.0.0.1:4402/paid", "timeoutSeconds": 30 }
+  },
+  "defaultEnvironment": "local",
+  "environments": {
+    "local": {
+      "baseUrl": "http://127.0.0.1:4402",
+      "network": "stellar:testnet",
+      "operatedByMe": true
+    }
+  },
+  "endpoints": [
+    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET" }
+  ]
+}
