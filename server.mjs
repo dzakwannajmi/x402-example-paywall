@@ -14,7 +14,7 @@ if (!["GET", "POST"].includes(method) || !/^\/[a-z0-9/_-]+$/.test(routePath)) {
   throw new Error("project.json has an unsupported method or path.");
 }
 
-const PORT = Number(process.env.PORT || 4402);
+const PORT = Number(process.env.PORT || 4403);
 const FACILITATOR_URL = process.env.FACILITATOR_URL || "https://www.x402.org/facilitator";
 const NETWORK = "stellar:testnet";
 
