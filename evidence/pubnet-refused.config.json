@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "service": {
+    "start": "npm start",
+    "ready": { "url": "http://127.0.0.1:4402/paid", "timeoutSeconds": 30 }
+  },
+  "defaultEnvironment": "pubnet",
+  "environments": {
+    "pubnet": {
+      "baseUrl": "http://127.0.0.1:4402",
+      "network": "stellar:pubnet",
+      "operatedByMe": true
+    }
+  },
+  "endpoints": [
+    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET" }
+  ]
+}
