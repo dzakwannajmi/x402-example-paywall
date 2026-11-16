@@ -7,7 +7,7 @@ request. It is practice material: testnet only, no real money, not a real servic
 
 | Path | What it is |
 | --- | --- |
-| `server.mjs` | The seller. One paid route, `GET /paid`, answers `402 Payment Required` with a payment request. |
+| `server.mjs` | The seller. One paid route, `GET /paid`, answers `402 Payment Required` with a payment request. It refuses a request for a language it does not have (a header `x-quote-lang` other than `en`) with `400`. |
 | `scripts/serve.mjs` | Starts the seller with a small local stand-in for the facilitator, so it runs with no internet access (for `npm run serve`). |
 | `wasit.config.json` | Tells Wasit how to start the seller, where it listens, and which endpoint to check. |
 | `.github/workflows/wasit.yml` | The workflow: install, start the seller, run the checks, comment on the pull request. |
@@ -22,9 +22,12 @@ On every pull request, every push to `main` and every manual run (workflow_dispa
 3. runs the read-only checks X402-01 to X402-05 against `GET /paid`. These check that an unpaid request is answered
    with `402`, that the payment header is there and decodes, that the required fields are present and that the
    network is a valid identifier. No payment is made and nothing is signed;
-4. on a push to `main` and on a manual run only, runs the payment checks X402-06 to X402-10 on the Stellar test
+4. on a push to `main` and on a manual run only, runs the payment checks X402-06 to X402-11 on the Stellar test
    network, paying from a testnet account kept in the repository secret `WASIT_TESTNET_PAYER`. Each payment is
-   at most $1.00 and a run at most $5.00; at this route's price of $0.005 a run signs at most $0.0175;
+   at most $1.00 and a run at most $5.00; at this route's price of $0.005 a run signs at most $0.0225.
+   X402-11 sends a valid payment with a request the seller must refuse, the `reject` case in `wasit.config.json`
+   (a language it does not have), then reads the chain until that payment's authorization has expired, about
+   five minutes at the default lifetime, to show it was never taken;
 5. writes a summary and, on a pull request, one comment with the result and what changed since the last green run
    on `main`;
 6. stops the seller and fails the job if any check failed.

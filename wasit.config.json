@@ -13,6 +13,7 @@
     }
   },
   "endpoints": [
-    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET" }
+    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET",
+      "reject": { "headers": { "x-quote-lang": "xx" }, "note": "a language the quote does not exist in must be refused" } }
   ]
 }
