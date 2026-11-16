@@ -11,7 +11,7 @@ request. It is practice material: testnet only, no real money, not a real servic
 | `scripts/serve.mjs` | Starts the seller with a small local stand-in for the facilitator, so it runs with no internet access (for `npm run serve`). |
 | `wasit.config.json` | Tells Wasit how to start the seller, where it listens, and which endpoint to check. |
 | `.github/workflows/wasit.yml` | The workflow: install, start the seller, run the checks, comment on the pull request. |
-| `project.json` | The seller's settings. The payee is a public address; its secret key was discarded on purpose. |
+| `project.json` | The seller's settings. The payee is the public address of a testnet account of ours that holds a testnet USDC trustline, so it can be paid. |
 
 ## What the workflow does
 
