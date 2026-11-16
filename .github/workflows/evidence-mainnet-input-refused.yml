@@ -1,0 +1,38 @@
+# Evidence, not a template, and only on this branch: it is never merged.
+#
+# Shows that the Wasit Action refuses its mainnet input on a push. This version of
+# Wasit has no mainnet opt-in: mainnet: true stops the job in the step that checks
+# the inputs, with exit 2, before Wasit is installed or the service starts, and the
+# job summary says why. No payer key is given. This job is expected to fail.
+
+name: Evidence, mainnet input refused on a push
+
+on:
+  push:
+    branches: [evidence/mainnet-input-refused]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  mainnet-input-refused:
+    name: The mainnet input is refused
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install the service
+        run: npm ci
+
+      - uses: wasit-dev/wasit/action@9455066ee82a49ffe6d574f052da0904720ee818
+        with:
+          config: wasit.config.json
+          tier: payment
+          mainnet: true
