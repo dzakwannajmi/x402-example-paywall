@@ -17,6 +17,7 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -40,6 +41,11 @@ jobs:
         run: npm ci
 
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
-      - uses: wasit-dev/wasit/action@5c498cddf6f85190306f0ccb98485dcbfb7de9bf
+      # The payment tier pays on the Stellar test network only, on a push to main and on workflow_dispatch.
+      # On a pull request it runs the read-only checks, and the key is not given to the job.
+      - uses: wasit-dev/wasit/action@94398a710832200abff64a8f1ff085e789f418c4
         with:
           config: wasit.config.json
+          tier: payment
+        env:
+          STELLAR_PRIVATE_KEY: ${{ github.event_name != 'pull_request' && secrets.WASIT_TESTNET_PAYER || '' }}
