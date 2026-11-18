@@ -43,7 +43,7 @@ jobs:
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
       # The payment tier pays on the Stellar test network only, on a push to main and on workflow_dispatch.
       # On a pull request it runs the read-only checks, and the key is not given to the job.
-      - uses: wasit-dev/wasit/action@9455066ee82a49ffe6d574f052da0904720ee818
+      - uses: wasit-dev/wasit/action@08eb1114fa523a73db91a8cedf0c4cef2adba350
         with:
           config: wasit.config.json
           tier: payment
