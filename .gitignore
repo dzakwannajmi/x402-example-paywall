@@ -5,3 +5,4 @@ report.md
 report.json
 report-full.md
 report-full.json
+*.log
