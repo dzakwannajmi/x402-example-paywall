@@ -66,3 +66,5 @@ expected and the actual value and what to change. Fix the block (or delete it) a
 ## License
 
 MIT. See `LICENSE`.
+
+Fork test of the Wasit run on a pull request.
