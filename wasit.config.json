@@ -1,7 +1,7 @@
 {
   "version": 1,
   "service": {
-    "start": "node scripts/serve.mjs",
+    "start": "npm start",
     "ready": { "url": "http://127.0.0.1:4402/paid", "timeoutSeconds": 30 }
   },
   "defaultEnvironment": "local",
@@ -13,6 +13,7 @@
     }
   },
   "endpoints": [
-    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET" }
+    { "name": "quote-of-the-day", "protocol": "x402", "path": "/paid", "method": "GET",
+      "reject": { "headers": { "x-quote-lang": "xx" }, "note": "a language the quote does not exist in must be refused" } }
   ]
 }
