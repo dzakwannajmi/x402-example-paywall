@@ -58,7 +58,7 @@ jobs:
         run: echo "NODE_OPTIONS=--require $GITHUB_WORKSPACE/.github/node-options-probe.cjs" >> "$GITHUB_ENV"
 
       - name: Control, a plain step loads the probe
-        run: node -e "console.log('control step: node ran')"
+        run: node -e "console.log('control step, node ran')"
 
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
       # The payment tier pays on the Stellar test network only, on a push to main and on workflow_dispatch.
