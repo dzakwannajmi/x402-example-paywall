@@ -51,10 +51,21 @@ jobs:
       - name: Install the service
         run: npm ci
 
+      # Evidence branch, never merged (2026-11-21). An earlier step sets BASH_ENV
+      # through GITHUB_ENV; the file only prints a marker. The control step shows the
+      # runner applies it to a later step; the Wasit Action's steps set BASH_ENV empty.
+      - name: Probe, set BASH_ENV through GITHUB_ENV
+        run: |
+          printf 'echo "PROBE-BASH-ENV-SOURCED (GH_TOKEN set: ${GH_TOKEN:+yes})"\n' > "$RUNNER_TEMP/probe-bash-env.sh"
+          echo "BASH_ENV=$RUNNER_TEMP/probe-bash-env.sh" >> "$GITHUB_ENV"
+
+      - name: Probe, a plain step after it (control)
+        run: echo "control step body"
+
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
       # The payment tier pays on the Stellar test network only, on a push to main and on workflow_dispatch.
       # On a pull request it runs the read-only checks, and the key is not given to the job.
-      - uses: wasit-dev/wasit/action@38d8a867878a2aad6cc26625912ab7d0ce5af1e4
+      - uses: wasit-dev/wasit/action@d14ea9e4036c255fc02ac0c1321263bec154019a
         with:
           config: wasit.config.json
           tier: payment
