@@ -51,6 +51,19 @@ jobs:
       - name: Install the service
         run: npm ci
 
+      # Evidence only (this pull request is never merged). First try: a step before
+      # Wasit sets NODE_OPTIONS through GITHUB_ENV (the runner refuses it, run
+      # 44644150278). Second: the workflow's own env on the action step, the path
+      # that remains. The control step has the same env and must print WASIT-PROBE;
+      # the Wasit action's steps, and the service it starts, must not.
+      - name: Set NODE_OPTIONS through GITHUB_ENV
+        run: echo "NODE_OPTIONS=--require $GITHUB_WORKSPACE/.github/node-options-probe.cjs" >> "$GITHUB_ENV"
+
+      - name: Control, a plain step loads the probe
+        env:
+          NODE_OPTIONS: --require ${{ github.workspace }}/.github/node-options-probe.cjs
+        run: node -e "console.log('control step, node ran')"
+
       # Pin Wasit to a full commit SHA of its repository, never a branch name.
       # The payment tier pays on the Stellar test network only, on a push to main and on workflow_dispatch.
       # On a pull request it runs the read-only checks, and the key is not given to the job.
@@ -60,3 +73,4 @@ jobs:
           tier: payment
         env:
           STELLAR_PRIVATE_KEY: ${{ github.event_name != 'pull_request' && secrets.WASIT_TESTNET_PAYER || '' }}
+          NODE_OPTIONS: --require ${{ github.workspace }}/.github/node-options-probe.cjs
