@@ -76,7 +76,13 @@ app.use(
     [{ network: NETWORK, server: new ExactStellarScheme() }],
   ),
 );
-app[method.toLowerCase()](routePath, (_req, res) => res.json(RESOURCE));
+// The languages the quote exists in. A request for another one (header x-quote-lang) is refused with 400, and the
+// x402 middleware does not settle the payment of a request answered 400 or above. Wasit's X402-11 checks exactly this.
+const LANGUAGES = ["en"];
+app[method.toLowerCase()](routePath, (req, res) => {
+  if (!LANGUAGES.includes(req.get("x-quote-lang") ?? "en")) return res.status(400).json({ error: "unsupported language" });
+  return res.json(RESOURCE);
+});
 
 app.listen(PORT, "127.0.0.1", () => {
   console.log(`seller ready on http://127.0.0.1:${PORT}${routePath} (${method}, price ${price}, ${NETWORK})`);

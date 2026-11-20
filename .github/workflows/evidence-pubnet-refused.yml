@@ -1,0 +1,56 @@
+# Evidence, not a template: your workflow is wasit.yml.
+#
+# Shows that Wasit's payment tier refuses a payment on Stellar mainnet before
+# anything is started, sent or signed. evidence/pubnet-refused.config.json names
+# stellar:pubnet; this version of Wasit pays on test networks only. Started by
+# hand only (workflow_dispatch on main, an event that may pay), with no payer key.
+#
+# The Wasit step is expected to fail with exit 2. The step after it checks that it
+# did, and that Wasit wrote no report (it graded nothing), so this job is green
+# only when the refusal happened.
+
+name: Evidence, payment on stellar:pubnet refused
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  pubnet-refused:
+    name: Payment tier on stellar:pubnet is refused
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Install the service
+        run: npm ci
+
+      - id: wasit
+        uses: wasit-dev/wasit/action@9455066ee82a49ffe6d574f052da0904720ee818
+        continue-on-error: true
+        with:
+          config: evidence/pubnet-refused.config.json
+          tier: payment
+
+      - name: Expect the refusal
+        env:
+          OUTCOME: ${{ steps.wasit.outcome }}
+        run: |
+          if [ "$OUTCOME" != "failure" ]; then
+            echo "Wasit did not refuse the payment tier on stellar:pubnet (outcome: $OUTCOME)." >&2
+            exit 1
+          fi
+          if [ -e "$RUNNER_TEMP/wasit/report.json" ]; then
+            echo "Wasit wrote a report, so it ran checks: it should have stopped before them." >&2
+            exit 1
+          fi
+          echo "As expected: Wasit refused the payment tier on stellar:pubnet with exit 2 and wrote no report. Its reason is in the log of the Wasit step."
