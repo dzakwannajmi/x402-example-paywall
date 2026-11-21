@@ -1,7 +1,7 @@
 {
   "version": 1,
   "service": {
-    "start": "npm start",
+    "start": "node scripts/serve.mjs",
     "ready": { "url": "http://127.0.0.1:4402/paid", "timeoutSeconds": 30 }
   },
   "defaultEnvironment": "local",
