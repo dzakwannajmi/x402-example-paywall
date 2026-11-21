@@ -43,7 +43,12 @@ export async function probeFacilitator(url, timeoutMs = 4000) {
 
 /** Start the local stand-in on a free 127.0.0.1 port. Resolves { url, close() }. */
 export function startStubFacilitator() {
-  const supported = { kinds: [STELLAR_TESTNET_KIND], extensions: [], signers: {} };
+  // The pubnet entry is the testnet entry with the network changed; it was not captured from a facilitator.
+  const supported = {
+    kinds: [STELLAR_TESTNET_KIND, { ...STELLAR_TESTNET_KIND, network: "stellar:pubnet" }],
+    extensions: [],
+    signers: {},
+  };
   const server = http.createServer((req, res) => {
     if (req.method === "GET" && req.url === "/supported") {
       res.writeHead(200, { "content-type": "application/json" });
